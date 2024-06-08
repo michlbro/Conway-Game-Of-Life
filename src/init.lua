@@ -87,11 +87,11 @@ function Conway:Step()
         local cellAdjacent = 0
         local cellState = state
 
-        for x = u - 1, v + 1 do
+        for x = u - 1, u + 1 do
             if (math.sign(x) == -1) or x > mapBoxSize then
                 continue
             end
-            for y = v - 1, u + 1 do
+            for y = v - 1, v + 1 do
                 if (math.sign(y) == -1) or y > mapBoxSize then
                     continue
                 end
@@ -100,9 +100,6 @@ function Conway:Step()
                 if index1D == index then
                     continue
                 end  
-                if index == 54 then
-                    print(x, y, mapArea[index1D])
-                end
                 cellAdjacent += mapArea[index1D] and 1 or 0
             end
         end

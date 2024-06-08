@@ -9,6 +9,9 @@
 
         "ReplicatedStorage": {
             "$path": "game/src/ReplicatedStorage",
+            "Packages": {
+                "$path": "Packages"
+            },
             "Conway": {
                 "$path": "src"
             }
