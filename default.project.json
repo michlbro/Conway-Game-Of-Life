@@ -1,0 +1,27 @@
+{
+    "name": "Conway Game of Life",
+    "tree": {
+        "$className": "DataModel",
+
+        "ReplicatedFirst": {
+            "$path": "game/src/ReplicatedFirst"
+        },
+
+        "ReplicatedStorage": {
+            "$path": "game/src/ReplicatedStorage",
+            "Conway": {
+                "$path": "src"
+            }
+        },
+
+        "StarterPlayer": {
+            "StarterPlayerScripts": {
+                "$path": "game/src/Client"
+            }
+        },
+
+        "ServerScriptService": {
+            "$path": "game/src/Server"
+        }
+    }
+}
