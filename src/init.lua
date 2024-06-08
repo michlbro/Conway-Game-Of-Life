@@ -41,6 +41,16 @@ end
 function Conway:Step()
     local mapXSize, mapYSize = self.size.X, self.size.Y
     local mapBoxSize = mapXSize * mapYSize
+    -- Process inputs
+    for _, inputTask: Vector3 in self._input do
+        local x, y, state = inputTask.X, inputTask.Y, inputTask.Z
+        if (x > mapXSize) or (math.sign(x) == -1) or (y > mapYSize) or (math.sign(y) == -1) then
+            warn(`Out Of Bounds {x}, {y}, state: {state}`)
+            continue
+        end
+        self._map[x + (y * mapYSize)] = state == 1 or false
+    end
+    table.clear(self._input)
     -- clone map from previous step
     local map0 = {}
     for i, v in self._map do
@@ -50,22 +60,19 @@ function Conway:Step()
     -- Add temporary cells around live cells in previous step
     local mapArea = {}
     for i, v in map0 do
-        for x = i - 1, i + 1 do
+        local v = i // mapXSize
+        local u = i % mapXSize
+        for x = u - 1, u + 1 do
             if (math.sign(x) == -1) or x > mapBoxSize then
                 continue
             end
-            for y = x - mapXSize, x + mapXSize, mapXSize do
+            for y = v - 1, v + 1 do
+                local index = y * mapXSize + x
                 if (math.sign(y) == -1) or y > mapBoxSize then
                     continue
                 end
 
-                if x == i and y // mapXSize == i // mapXSize then
-                    mapArea[i] = true
-                    continue
-                end
-
-                local index = y * mapXSize + x
-                mapArea[index] = map0[index] or 0
+                mapArea[index] = map0[index] or false
             end
         end
     end
@@ -73,26 +80,33 @@ function Conway:Step()
     table.clear(self._map)
     local map = self._map
     -- Calculate live cells
-    for index, v in mapArea do
-        local cellAdjacent = 0
-        local cellState = mapArea[index]
+    for index, state in mapArea do
+        local v = index // mapXSize
+        local u = index % mapXSize
 
-        for x = index - 1, index + 1 do
+        local cellAdjacent = 0
+        local cellState = state
+
+        for x = u - 1, v + 1 do
             if (math.sign(x) == -1) or x > mapBoxSize then
                 continue
             end
-            for y = x - mapXSize, x + mapXSize, mapXSize do
+            for y = v - 1, u + 1 do
                 if (math.sign(y) == -1) or y > mapBoxSize then
                     continue
                 end
-                if x == index and y // mapXSize == index // mapXSize then
+                local index1D = y * mapXSize + x
+
+                if index1D == index then
                     continue
-                end                
-                local indexAdjacent = y * mapXSize + x
-                cellAdjacent += mapArea[indexAdjacent] and 1 or 0
+                end  
+                if index == 54 then
+                    print(x, y, mapArea[index1D])
+                end
+                cellAdjacent += mapArea[index1D] and 1 or 0
             end
         end
-
+        
         if cellAdjacent < 2 then
             cellState = false
         elseif cellAdjacent == 3 then
